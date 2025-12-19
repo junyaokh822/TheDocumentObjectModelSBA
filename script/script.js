@@ -88,4 +88,12 @@ function updateTitleAttr() {
   titleEl.setAttribute("title", `${items.length} items in warehouse`);
 }
 
+//Event-based validation
+function validateLocation() {
+  const input = document.getElementById("location");
+  const error = document.getElementById("location-error");
+  const isValid = !input.value || /^[A-Z][0-9]{2}-[0-9]{2}$/.test(input.value);
 
+  error.style.display = isValid ? "none" : "block";
+  return isValid;
+}
