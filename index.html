@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="./style/styles.css" />
-    <script defer src="./script/script.js"></script>
+    <script defer src="script\script.js"></script>
     <title>Warehouse</title>
   </head>
   <body>
@@ -13,6 +13,9 @@
       <div>
         <label>Item Name:</label>
         <input type="text" id="name" required minlength="2" />
+        <div class="error" id="name-error">
+          Name must be at least 2 characters
+        </div>
       </div>
 
       <div>
@@ -22,7 +25,13 @@
 
       <div>
         <label>Location:</label>
-        <input type="text" id="Location" />
+        <input
+          type="text"
+          id="Location"
+          pattern="[A-Z][0-9]{2}-[0-9]{2}"
+          placeholder="e.g. A01-01"
+        />
+        <div class="error" id="location-error">Format must be A01-01</div>
       </div>
 
       <button type="submit">Add Item</button>
@@ -35,8 +44,8 @@
       <div class="item">
         <span class="item-name"></span> - <span class="item-qty"></span> pcs at
         <span class="item-loc"></span>
-        <button class="edit"></button>
-        <button class="delete"></button>
+        <button class="edit">Edit</button>
+        <button class="delete">Delete</button>
       </div>
     </template>
   </body>
