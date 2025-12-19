@@ -2,10 +2,15 @@
 const formEl = document.getElementById("item-form");
 const titleEl = document.getElementById("title");
 const inventoryEl = document.getElementById("inventory");
+const nameInput = document.getElementById("name");
+const quantityInput = document.getElementById("quantity");
+const locationInput = document.getElementById("location");
 
 //cache with querySelector
 const clearBtn = document.querySelector("#clear");
 const itemTemplate = document.querySelector("#item-template");
+const nameError = document.querySelector("#name-error");
+const locationError = document.querySelector("#location-error");
 
 //apply createElement
 const subtitle = document.createElement("p");
@@ -32,7 +37,6 @@ let nextId = 1; //unique id given to each item
 
 function addItem(name, quantity, location) {
   const fragment = new DocumentFragment(); //create a documentfragment
-
   const templateContent = itemTemplate.content;
   const clone = templateContent.firstElementChild.cloneNode(true); // Clone the div element
 
@@ -70,16 +74,19 @@ function updateDisplay() {
   document.getElementById("total").textContent = `Total items: ${items.length}`;
 }
 
-//notify if stock is low
+//highlight if stock is low for items
 function highlightLowStock() {
   const itemDivs = document.querySelectorAll(".item");
-  itemDivs.forEach((div, i) => {
+  for (let i = 0; i < itemDivs.length; i++) {
+    const div = itemDivs[i];
     if (items[i] && items[i].quantity < 5) {
       div.classList.add("low-stock");
+      div.style.fontWeight = "Bold";
     } else {
       div.classList.remove("low-stock");
+      div.style.fontWeight = "normal";
     }
-  });
+  }
 }
 
 function updateTitleAttr() {
@@ -88,11 +95,10 @@ function updateTitleAttr() {
 
 //Event-based validation
 function validateLocation() {
-  const input = document.getElementById("location");
-  const error = document.getElementById("location-error");
-  const isValid = !input.value || /^[A-Z][0-9]{2}-[0-9]{2}$/.test(input.value);
-
-  error.style.display = isValid ? "none" : "block";
+  const isValid =
+    !locationInput.value ||
+    /^[A-Z][0-9]{2}-[0-9]{2}$/.test(locationInput.value);
+  locationError.style.display = isValid ? "none" : "block";
   return isValid;
 }
 
@@ -102,15 +108,20 @@ function editItem(itemDiv) {
   const qtySpan = itemDiv.querySelector(".item-qty");
   const locSpan = itemDiv.querySelector(".item-loc");
 
-  //navigate using sibling relationship
-  const nameCell = nameSpan.parentNode;
-  const nextCell = nameCell.nextElementSibling;
-  console.log("Next Element after name:", nextCell?.textContent);
+  //highlight the border of the following item in the list after clicking the the edit button
+  const nextItem = itemDiv.nextElementSibling; //gets the next item from the list
+  if (nextItem) {
+    nextItem.style.border = "5px solid blue"; //thicken border
+    setTimeout(() => {
+      nextItem.style.border = ""; //removes the border after 1 sec
+    }, 1000);
+  }
 
-  //fill form with item data
-  document.getElementById("name").value = nameSpan.textContent;
-  document.getElementById("quantity").value = qtySpan.textContent;
-  document.getElementById("location").value = locSpan.textContent;
+  //fill form with current item
+  nameInput.value = nameSpan.textContent;
+  quantityInput.value = qtySpan.textContent;
+  locationInput.value =
+    locSpan.textContent === "N/A" ? "" : locSpan.textContent;
 
   //remove from display
   itemDiv.remove();
@@ -118,6 +129,7 @@ function editItem(itemDiv) {
   //remove from array
   const itemName = nameSpan.textContent;
   items = items.filter((item) => item.name !== itemName);
+
   updateDisplay();
   highlightLowStock();
   updateTitleAttr();
@@ -142,34 +154,31 @@ function deleteItem(itemDiv) {
 function handleSubmit(e) {
   e.preventDefault();
 
-  const name = document.getElementById("name").value;
-  const quantity = document.getElementById("quantity").value;
-  const location = document.getElementById("location").value;
+  const name = nameInput.value;
+  const quantity = quantityInput.value;
+  const location = locationInput.value;
 
   if (name.length < 2) {
-    document.getElementById("name-error").style.display = "block";
+    nameError.style.display = "block";
     return;
+  } else {
+    nameError.style.display = "none";
   }
 
   if (!validateLocation()) return;
 
   addItem(name, quantity, location);
-  highlightLowStock();
-  updateTitleAttr();
 
-  //clear form
-  document.getElementById("name").value = "";
-  document.getElementById("quantity").value = "";
-  document.getElementById("location").value = "";
-  document.getElementById("name-error").style.display = "none";
+  // Clear form
+  clearForm();
 }
 
 function clearForm() {
-  document.getElementById("name").value = "";
-  document.getElementById("quantity").value = "";
-  document.getElementById("location").value = "";
-  document.getElementById("name-error").style.display = "none";
-  document.getElementById("location-error").style.display = "none";
+  nameInput.value = "";
+  quantityInput.value = "";
+  locationInput.value = "";
+  nameError.style.display = "none";
+  locationError.style.display = "none";
 }
 
 //added event listeners
@@ -177,4 +186,4 @@ formEl.addEventListener("submit", handleSubmit);
 clearBtn.addEventListener("click", clearForm);
 
 //event based validation
-document.getElementById("location").addEventListener("input", validateLocation);
+locationInput.addEventListener("input", validateLocation);
