@@ -16,6 +16,7 @@ document.body.insertBefore(subtitle, formEl);
 const totalEl = document.createElement("div");
 totalEl.id = "total";
 totalEl.textContent = "Total items: 0";
+totalEl.classList.add("total-center");
 inventoryEl.appendChild(totalEl);
 
 //BOM properties/method
