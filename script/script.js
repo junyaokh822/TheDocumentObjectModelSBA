@@ -66,3 +66,26 @@ function addItem(name, quantity, location) {
   items.push({ id: nextId++, name, quantity, location }); //add item data to the array
   updateDisplay(); //refresh total counts
 }
+
+function updateDisplay() {
+  titleEl.textContent = `Warehouse Items: ${items.length}`;
+  document.getElementById("total").textContent = `Total items: ${items.length}`;
+}
+
+//notify if stock is low
+function highlightLowStock() {
+  const itemDivs = document.querySelectorAll(".item");
+  itemDivs.forEach((div, i) => {
+    if (items[i] && items[i].quantity < 5) {
+      div.classList.add("low-stock");
+    } else {
+      div.classList.remove("low-stock");
+    }
+  });
+}
+
+function updateTitleAttr() {
+  titleEl.setAttribute("title", `${items.length} items in warehouse`);
+}
+
+
