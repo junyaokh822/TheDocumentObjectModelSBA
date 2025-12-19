@@ -135,4 +135,38 @@ function deleteItem(itemDiv) {
   updateTitleAttr();
 }
 
+//form handler
+function handleSubmit(e) {
+  e.preventDefault();
 
+  const name = document.getElementById("name").value;
+  const quantity = document.getElementById("quantity").value;
+  const location = document.getElementById("location").value;
+
+  if (name.length < 2) {
+    document.getElementById("name-error").style.display = "block";
+    return;
+  }
+
+  if (!validateLocation()) return;
+
+  addItem(name, quantity, location);
+  highlightLowStock();
+  updateTitleAttr();
+
+  //clear form
+  document.getElementById("name").value = "";
+  document.getElementById("quantity").value = "";
+  document.getElementById("location").value = "";
+  document.getElementById("name-error").style.display = "none";
+}
+
+function clearForm() {
+  document.getElementById("name").value = "";
+  document.getElementById("quantity").value = "";
+  document.getElementById("location").value = "";
+  document.getElementById("name-error").style.display = "none";
+  document.getElementById("location-error").style.display = "none";
+}
+
+addItem("Laptop", 10, "A01-01");
