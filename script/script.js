@@ -97,3 +97,42 @@ function validateLocation() {
   error.style.display = isValid ? "none" : "block";
   return isValid;
 }
+
+//parent-child-sibling navigation
+function editItem(itemDiv) {
+  const nameSpan = itemDiv.querySelector(".item-name");
+  const qtySpan = itemDiv.querySelector(".item-qty");
+  const locSpan = itemDiv.querySelector(".item-loc");
+
+  //navigate using sibling relationship
+  const nameCell = nameSpan.parentNode;
+  const nextCell = nameCell.nextElementSibling;
+  console.log("Next Element after name:", nextCell?.textContent);
+
+  //fill form with item data
+  document.getElementById("name").value = nameSpan.textContent;
+  document.getElementById("quantity").value = qtySpan.textContent;
+  document.getElementById("location").value = locSpan.textContent;
+
+  //remove from display
+  itemDiv.remove();
+
+  //remove from array
+  const itemName = nameSpan.textContent;
+  items = items.filter((item) => item.name !== itemName);
+  updateDisplay();
+  highlightLowStock();
+}
+
+//iterate over collection
+function deleteItem(itemDiv) {
+  const name = itemDiv.querySelector(".item-name");
+  items = items.filter((item) => item.name !== name); // create array to store the items that aren't what we're looking for
+  itemDiv.remove(); // delete the selected item
+
+  update();
+  highlightLowStock();
+  updateTitleAttr();
+}
+
+
