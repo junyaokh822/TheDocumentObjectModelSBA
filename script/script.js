@@ -18,13 +18,6 @@ totalEl.id = "total";
 totalEl.textContent = "Total items: 0";
 inventoryEl.appendChild(totalEl);
 
-//added event listeners
-formEl.addEventListener("submit", handleSubmit);
-clearBtn.addEventListener("click", clearForm);
-
-//event based validation
-document.getElementById("location").addEventListener("input", validateLocation);
-
 //BOM properties/method
 console.log("Page URL:", window.location.href); //BOM property
 
@@ -37,8 +30,10 @@ let items = []; //array to store warehouse items
 let nextId = 1; //unique id given to each item
 
 function addItem(name, quantity, location) {
-  const fragment = new DocumentFragment(); //create an documentfragment
-  const clone = itemTemplate.textContent.cloneNode(true); //gets the content inside <template> and clone them
+  const fragment = new DocumentFragment(); //create a documentfragment
+
+  const templateContent = itemTemplate.content;
+  const clone = templateContent.firstElementChild.cloneNode(true); // Clone the div element
 
   //fill the cloned template with data
   clone.querySelector(".item-name").textContent = name;
@@ -65,6 +60,8 @@ function addItem(name, quantity, location) {
 
   items.push({ id: nextId++, name, quantity, location }); //add item data to the array
   updateDisplay(); //refresh total counts
+  highlightLowStock(); // Apply low-stock highlighting
+  updateTitleAttr(); // Update title attribute
 }
 
 function updateDisplay() {
@@ -122,15 +119,20 @@ function editItem(itemDiv) {
   items = items.filter((item) => item.name !== itemName);
   updateDisplay();
   highlightLowStock();
+  updateTitleAttr();
 }
 
 //iterate over collection
 function deleteItem(itemDiv) {
-  const name = itemDiv.querySelector(".item-name");
-  items = items.filter((item) => item.name !== name); // create array to store the items that aren't what we're looking for
-  itemDiv.remove(); // delete the selected item
+  const name = itemDiv.querySelector(".item-name").textContent;
 
-  update();
+  // Create new array without the deleted item
+  items = items.filter((item) => item.name !== name);
+
+  // Delete from DOM
+  itemDiv.remove();
+
+  updateDisplay();
   highlightLowStock();
   updateTitleAttr();
 }
@@ -169,4 +171,9 @@ function clearForm() {
   document.getElementById("location-error").style.display = "none";
 }
 
-addItem("Laptop", 10, "A01-01");
+//added event listeners
+formEl.addEventListener("submit", handleSubmit);
+clearBtn.addEventListener("click", clearForm);
+
+//event based validation
+document.getElementById("location").addEventListener("input", validateLocation);
